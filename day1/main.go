@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"fmt"
 	"slices"
 	"strconv"
 	"strings"
@@ -33,7 +34,7 @@ func main() {
 	for i := 0; i < len(n1s); i++ {
 		sum1 += max(n1s[i]-n2s[i], n2s[i]-n1s[i])
 	}
-	println("Part 1: ", sum1)
+	fmt.Println("Part 1: ", sum1)
 
 	times := make(map[int]int)
 	for _, n := range n1s {
@@ -54,5 +55,5 @@ func main() {
 		sum2 += i * t
 	}
 
-	println("Part 2: ", sum2)
+	fmt.Println("Part 2: ", sum2)
 }
