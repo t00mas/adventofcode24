@@ -2,15 +2,27 @@ package main
 
 import (
 	_ "embed"
+	"flag"
 	"fmt"
+	"strings"
 )
 
+var debug *bool
+
+func p(a ...interface{}) {
+	if *debug {
+		fmt.Println(a...)
+	}
+}
+
 //go:embed input.txt
-var input_txt []byte
+var input []byte
 
 func main() {
-	//input := string(input_txt)
-	//lines := strings.Split(input, "\n")
+	debug = flag.Bool("debug", false, "Debug")
+	flag.Parse()
+
+	input := strings.Split(string(input), "\n")
 
 	fmt.Println("Part 1: ")
 
