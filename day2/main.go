@@ -8,38 +8,36 @@ import (
 )
 
 //go:embed input.txt
-var input_txt []byte
+var input []byte
 
+// checkReport checks if the report is valid (within 3 steps and no flat steps, respecting the order)
 func checkReport(report []string) bool {
-	ld := "flat"
+	lastDirection := "flat"
 	for i := 1; i < len(report); i++ {
-		a, _ := strconv.Atoi(report[i-1])
-		b, _ := strconv.Atoi(report[i])
-		diff := a - b
-		var cd string
+		prev, _ := strconv.Atoi(report[i-1])
+		curr, _ := strconv.Atoi(report[i])
+		diff := prev - curr
+		var currDirection string
 		if diff < 0 {
-			cd = "inc"
+			currDirection = "inc"
 		} else if diff > 0 {
-			cd = "dec"
+			currDirection = "dec"
 		}
-		if ld == "flat" {
-			ld = cd
-		} else if ld != cd {
+
+		if lastDirection == "flat" {
+			lastDirection = currDirection
+		} else if lastDirection != currDirection {
 			return false
 		}
-		if diff == 0 {
-			return false
-		}
-		if diff < 0 {
-			diff = -diff
-		}
-		if diff > 3 {
+
+		if diff == 0 || abs(diff) > 3 {
 			return false
 		}
 	}
 	return true
 }
 
+// checkAllSubreports checks if the report is still valid if removing any one element
 func checkAllSubreports(report []string) bool {
 	for i := 0; i < len(report); i++ {
 		subReport := make([]string, 0)
@@ -53,29 +51,25 @@ func checkAllSubreports(report []string) bool {
 }
 
 func main() {
-	input := string(input_txt)
-	lines := strings.Split(input, "\n")
-	safe1 := len(lines)
+	lines := strings.Split(strings.TrimSpace(string(input)), "\n")
+	numSafeReports1 := 0
+	numSafeReports2 := 0
 	for _, line := range lines {
-		ns := strings.Split(line, " ")
-		if !checkReport(ns) {
-			safe1--
-			continue
-		}
-	}
-	fmt.Println("Part 1: ", safe1)
-
-	safe2 := 0
-	for _, line := range lines {
-		ns := strings.Split(line, " ")
+		ns := strings.Fields(line)
 		if checkReport(ns) {
-			safe2++
-			continue
+			numSafeReports1++
 		}
-		if checkAllSubreports(ns) {
-			safe2++
-			continue
+		if checkReport(ns) || checkAllSubreports(ns) {
+			numSafeReports2++
 		}
 	}
-	fmt.Println("Part 2: ", safe2)
+	fmt.Println("Part 1:", numSafeReports1)
+	fmt.Println("Part 2:", numSafeReports2)
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
